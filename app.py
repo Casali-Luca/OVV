@@ -35,8 +35,8 @@ def printall(station : str):
     return jsonify(results), 202
 
 
-@app.route("/insert-data/<temp>,<umidity>,<pm>")
-def insert_data(temp, umidity, pm):
+@app.route("/insert_data/<station>/<temp>,<umidity>,<pm>")
+def insert_data(temp, umidity, pm, station):
     ins_data = {
         "temperatura" : temp,
         "umidity" : umidity,
@@ -46,6 +46,18 @@ def insert_data(temp, umidity, pm):
 
     if extra:
         ins_data["extra"] = extra
+
+    db = connect(host='localhost',
+                 user="root",
+                 password="",
+                 db="centralina")
+    cur = db.cursor()
+
+    #ex:
+    #INSERT INTO `centrale` (`id`, `temperatura`, `umidita`, `pm`) VALUES (NULL, '28.7', '93.1', '1.1')
+    cur.execute("INSERT INTO `"+station+"` (temperatura, umidita, pm) VALUES ("+ temp +"," + umidity+ "," + pm+")")
+    db.commit()
+    cur.close()
 
     return jsonify(ins_data), 200
 
