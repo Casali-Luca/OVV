@@ -7,21 +7,6 @@ app = Flask(__name__)
 def home():
     return render_template("index.html")
 
-@app.route("/get-data/<temp>,<umidity>,<pm>")
-def get_data(temp, umidity, pm):
-    data = {
-        "temperatura" : temp,
-        "umidity" : umidity,
-        "pm" : pm
-    }
-    extra = request.args.get("extra")
-
-    if extra:
-        data["extra"] = extra
-
-    return jsonify(data), 200
-
-
 @app.route("/print_all/<station>")
 def printall(station : str):
     db = connect(host='localhost',
@@ -36,16 +21,17 @@ def printall(station : str):
 
 
 @app.route("/insert_data/<station>/<temp>,<umidity>,<pm>")
-def insert_data(temp, umidity, pm, station):
+def insert_data(temp :float, umidity:float, pm:float, station:str):
+    
+    if(station !=  "centrale"):
+        return render_template("error.html")
+    
     ins_data = {
         "temperatura" : temp,
         "umidity" : umidity,
         "pm" : pm
     }
     extra = request.args.get("extra")
-
-    if extra:
-        ins_data["extra"] = extra
 
     db = connect(host='localhost',
                  user="root",
