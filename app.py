@@ -1,7 +1,19 @@
 from flask import Flask, request, jsonify, render_template
 from random import *
 from pymysql import *
+import python_weather
+import asyncio
+
 app = Flask(__name__)
+
+async def get_weather():
+    nomecity = "Bergamo"
+    async with python_weather.Client(unit=python_weather.IMPERIAL) as client:
+        weather = await client.get(f"{nomecity}")
+        for forecast in weather.forecasts:
+            for hourly in forecast.hourly:
+                print(f' --> {hourly!r}')
+            break
 
 @app.route("/")
 def home():
@@ -65,7 +77,7 @@ def get_api_data(api_name):
     
     var = ""
     if api_name == 'weather':
-        ...
+        return asyncio.run(get_weather())
     elif api_name == 'airQuality':
         var = 'pm'
     elif api_name == 'humidity':
