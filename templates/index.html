@@ -2,11 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <title>WebApp</title>
 </head>
 <body>
-    <p>
-        pagina principale in attesa..........
-    </p>
+
+<div class="center-container">
+    <table class="dashboard-table">
+        <tr>
+            <td>
+                <img src="weather.png" alt="...">
+                <span>Meteo</span>
+            </td>
+            <td class="variable-value" id="weatherValue">Loading...</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="dust.png" alt="...">
+                <span>Qualità dell'aria</span>
+            </td>
+            <td class="variable-value" id="airQualityValue">Loading...</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="humidity.png" alt="...">
+                <span>Umidità</span>
+            </td>
+            <td class="variable-value" id="humidityValue">Loading...</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="temperatures.png" alt="...">
+                <span>Temperatura</span>
+            </td>
+            <td class="variable-value" id="temperatureValue">Loading...</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="light-bulb.png" alt="...">
+                <span>Luce</span>
+            </td>
+            <td class="variable-value" id="lightValue">Loading...</td>
+        </tr>
+    </table>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
