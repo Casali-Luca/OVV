@@ -5,7 +5,7 @@ import python_weather
 import asyncio
 
 app = Flask(__name__)
-#semplice funzionamento delle api del meteo
+#semplice funzionamento delle api del meteo (WIP)
 async def get_weather():
     nomecity = "Bergamo"
     #dopo aver scelto la città, andiamo a richiamare le api del meteo tramite la classe presente in pythonWeather "client"
@@ -36,8 +36,8 @@ def printall(station : str):
     return jsonify(results), 202
 
 #inserimento data da parte dell'arduino o qualsiasi richiesta di pull
-@app.route("/insert_data/<station>/<temp>,<umidity>,<pm>")
-def insert_data(temp :float, umidity:float, pm:float, station:str):
+@app.route("/insert_data/<station>/<temp>,<umidity>,<pm>,<luce>")
+def insert_data(temp :float, umidity:float, pm:float, luce:float, station:str):
     
     if(station !=  "centrale"):
         return render_template("error.html")
@@ -45,7 +45,8 @@ def insert_data(temp :float, umidity:float, pm:float, station:str):
     ins_data = {
         "temperatura" : temp,
         "umidity" : umidity,
-        "pm" : pm
+        "pm" : pm,
+        "luce" : luce
     }
     extra = request.args.get("extra")
 
@@ -58,7 +59,7 @@ def insert_data(temp :float, umidity:float, pm:float, station:str):
 
     #ex:
     #INSERT INTO `centrale` (`id`, `temperatura`, `umidita`, `pm`) VALUES (NULL, '28.7', '93.1', '1.1')
-    cur.execute("INSERT INTO `"+station+"` (id, temperatura, umidita, pm) VALUES (null,"+ temp +"," + umidity+ "," + pm+")")
+    cur.execute("INSERT INTO `"+station+"` (id, temperatura, luce, umidita, pm) VALUES (NULL,"+ temp +"," + luce +","+ umidity+ "," + pm+")")
     db.commit()
     cur.close()
     #ritorno del json di ciò che abbiamo appena inserito
@@ -82,7 +83,7 @@ def get_api_data(api_name):
     #da ciò che si inserisce nell'URL restituirà il select dalla centrale
     var = ""
     if api_name == 'weather':
-        return 
+        return ...
     elif api_name == 'airQuality':
         var = 'pm'
     elif api_name == 'humidity':
@@ -90,7 +91,7 @@ def get_api_data(api_name):
     elif api_name == 'temperature':
         var = 'temperatura'
     elif api_name == 'light':
-        ...
+        var = "luce"
 
     sql = "SELECT "+ var +" FROM centrale"
     cur.execute(sql)
