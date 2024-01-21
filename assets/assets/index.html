@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+</head>
+<body>
+
+<nav class="navbar bg-body-tertiary" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="ovv-Logo_3.png" alt="Bootstrap" width="30" height="24">
+            OVVwebApp
+        </a>
+    </div>
+</nav>
+
+<div class="position-absolute top-12 start-0">
+    <div class="shadow bg-body-tertiary rounded card mt-2 ms-3" style="width: 11rem;">
+        <center>
+            <div class="spinner-grow text-primary mt-4" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </center>
+        <div class="card-body">
+            <p class="text-center fs-1 fw-bold">Umidità</p>
+            <div class="progress" role="progressbar" aria-label="Umidita" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar bg-primary" style="width: 50%"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="position-absolute top-12 end-0">
+    <div class="shadow bg-body-tertiary rounded card mt-2 me-3" style="width: 11rem;">
+        <center>
+            <div class="spinner-grow text-success mt-4" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </center>
+        <div class="card-body">
+            <p class="text-center fs-2 fw-bold mt-1">Temperatura</p>
+            <div class="progress" role="progressbar" aria-label="Temp" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar bg-success" style="width: 25%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="position-absolute top-50 start-50 translate-middle">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+                <div class="shadow bg-body-tertiary rounded card mt-4" style="width: 16rem;">
+                    <div class="card-body">
+                        <p class="text-center fs-2 fw-bold mt-1">Meteo</p>
+                        <span class="badge text-bg-info">Soleggiato</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <center>
+                    <div class="shadow bg-body-tertiary rounded card mt-4" style="width: 11rem;">
+                        <center>
+                            <div class="spinner-grow text-danger mt-4" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </center>
+                        <div class="card-body">
+                            <p class="text-center fs-2 fw-bold mt-1">Avvisi</p>
+                            <span class="badge text-bg-danger">Nesssun avviso</span>
+                        </div>
+                    </div>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="position-absolute bottom-0 start-0">
+    <div class="shadow bg-body-tertiary rounded card mb-4 ms-3" style="width: 11rem;">
+        <center>
+            <div class="spinner-grow text-warning mt-4" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </center>
+        <div class="card-body">
+            <p class="text-center fs-1 fw-bold">Luce</p>
+            <div class="progress" role="progressbar" aria-label="Temp" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar bg-warning" style="width: 50%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="position-absolute bottom-0 end-0">
+    <div class="shadow bg-body-tertiary rounded card mb-4 me-3" style="width: 11rem;">
+        <center>
+            <div class="spinner-grow text-secondary mt-4" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </center>
+        <div class="card-body">
+            <p class="text-center fs-1 fw-bold">Polvere</p>
+            <div class="progress" role="progressbar" aria-label="Temp" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar bg-secondary" style="width: 90%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
