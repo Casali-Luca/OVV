@@ -16,6 +16,7 @@ async def get_weather():
             for hourly in forecast.hourly:
                 print(f' --> {hourly!r}')
             break
+
 #route di partenza
 @app.route("/")
 def home():
@@ -37,11 +38,18 @@ def printall(station : str):
 
 #inserimento data da parte dell'arduino o qualsiasi richiesta di pull
 @app.route("/insert_data/<station>/<temp>,<umidity>,<pm>,<luce>")
-def insert_data(temp :float, umidity:float, pm:float, luce:float, station:str):
-    
+def insert_data(temp :str, umidity:str, pm:str, luce:str, station:str):
+
     if(station !=  "centrale"):
         return render_template("error.html")
     
+    temp = decrypt(temp)
+    umidity = decrypt(umidity)
+    pm = decrypt(pm)
+    luce = decrypt(luce)
+
+
+
     ins_data = {
         "temperatura" : temp,
         "umidity" : umidity,
@@ -65,6 +73,9 @@ def insert_data(temp :float, umidity:float, pm:float, luce:float, station:str):
     #ritorno del json di ciò che abbiamo appena inserito
     return jsonify(ins_data), 200
 
+
+
+
 #directory adibita alla chiamata API
 @app.route('/api/<api_name>')
 def get_api_value(api_name):
@@ -73,6 +84,7 @@ def get_api_value(api_name):
         return jsonify({'value': value})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 def get_api_data(api_name):
     db = connect(host='localhost',
@@ -101,6 +113,29 @@ def get_api_data(api_name):
     db.commit()
     cur.close()
     return results 
+
+def decrypt(stringa : str):
+    # aggiunta di un dizionario per evitare SQL injection
+    dizionario = { "H" : "1",
+                "k" : "2",
+                "@" : "3",
+                "I" : "4",
+                "t" : "5",
+                "!" : "6",
+                "]" : "7",
+                "S" : "8",
+                "d" : "9",
+                "L" : "0",
+                "é" : "."}
+    temp = ""
+    try:
+        for charac in stringa:
+            temp += dizionario[charac]
+    except:
+        temp = ""
+        
+    return temp
+
 
 if __name__ == '__main__':
     app.run(debug=True)
