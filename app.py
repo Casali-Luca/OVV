@@ -24,7 +24,7 @@ def home():
     return render_template("index.html",)
 
 #va a stampare tutti i valori presenti in una tabella a scelta del db
-@app.route("/print_all/<station>", methods=['POST'])
+@app.route("/print_all/<station>",methods=['POST'])
 def printall(station : str):
     if request.method=='POST':
         if request.args.get("ApplicationKey") == "oqwg-dash-jkbc-phuw-qgey-bhas-dapp":
@@ -38,8 +38,8 @@ def printall(station : str):
             db.close()
             return jsonify(results), 202
         else:
-            return "something went wrong"
-
+            return "errore nella key"
+    
 #inserimento data da parte dell'arduino o qualsiasi richiesta di pull
 @app.route("/insert_data/<station>/<temp>,<umidity>,<pm>,<luce>", methods=['POST'])
 def insert_data(temp :str, umidity:str, pm:str, luce:str, station:str):
@@ -145,5 +145,5 @@ def decrypt(stringa : str):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5500, threaded=True)
 
