@@ -2,29 +2,37 @@ from flask import Flask, request, jsonify, render_template
 from random import *
 from pymysql import *
 import python_weather
+from datetime import *
 import asyncio
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
+async def getweather():
+
+  async with python_weather.Client(unit=python_weather.IMPERIAL) as client:
+
+    weather = await client.get('Castel Rozzone')
+
+    lista = []
+
+    ora = datetime.now()
+
+    for daily in weather.daily_forecasts:
+      today = date.today()
+      if(str(today)[8:10] == str(daily)[43:45]):
+        for hourly in daily.hourly_forecasts:
+          # print(f' --> {hourly!r}')
+          lista.append(str(hourly.description))
+    
+    return lista[ora.hour%3]
+
 CodiciStazioni = {
     "centrale" : "CNTRmid",
     "destra" : "CNTRdes",
     "sinistra" : "CNTRsin"
 }
-
-#semplice funzionamento delle api del meteo (WIP)
-# async def get_weather():
-#     nomecity = "Bergamo"
-#     #dopo aver scelto la città, andiamo a richiamare le api del meteo tramite la classe presente in pythonWeather "client"
-#     async with python_weather.Client(unit=python_weather.IMPERIAL) as client:
-#         weather = await client.get(f"{nomecity}")
-#         #ritornerà una hash formata da ogni 3 ore con la relativa condizione metereologica
-#         for forecast in weather.forecasts:
-#             for hourly in forecast.hourly:
-#                 print(f' --> {hourly!r}')
-#             break
 
 #route di partenza
 @app.route("/")
@@ -43,7 +51,7 @@ def printall(station : str):
                             db="centralina")
             cur = db.cursor()
             codiceStation = CodiciStazioni[station.lower()]
-            if station =="":
+            if station == "":
                 cur.execute('SELECT * FROM DatiCentraline WHERE 1 ')
             else:
                 cur.execute('SELECT * FROM DatiCentraline WHERE codiceCentralina = "' + codiceStation +'"')
@@ -60,7 +68,6 @@ def printall(station : str):
 def insert_data(temp :str, umidity:str, pm:str, luce:str, station:str):
     if request.method=='POST':
         if request.args.get("ApplicationKey") == "oqwg-dash-jkbc-phuw-qgey-bhas-dapp":
-
 
             #decrypting
             temp = decrypt(temp)
@@ -92,17 +99,44 @@ def insert_data(temp :str, umidity:str, pm:str, luce:str, station:str):
             #INSERT INTO `centrale` (`id`, `temperatura`, `umidita`, `pm`) VALUES (NULL, '28.7', '93.1', '1.1')
             cur.execute('INSERT INTO DatiCentraline (id, codiceCentralina, temperatura, luce, umidita, pm) VALUES (NULL, "'+codiceStation +'",'+ temp +"," + luce +","+ umidity+ "," + pm+")")
             db.commit()
-            if int(temp)>45 or int(luce)>1000 or int(luce)<500 or int(temp)<18 or int(temp)>25 or int(umidity)<40 or int(umidity) >50:
+            if int(luce)>1000 or int(luce)<500 or int(temp)<18 or int(temp)>25 or int(umidity)<40 or int(umidity) >50 or float(pm) > 2.5:
                 cur.execute("INSERT INTO avvisi (oraEvento, idCentralina) VALUES (NOW(), (SELECT MAX(id) FROM DatiCentraline))")
                 db.commit()
-
-
 
             cur.close()
             #ritorno del json di ciò che abbiamo appena inserito
             return jsonify(ins_data), 200
 
+@app.route("/print_all_advices/", methods=['GET'])
+def printalladv():
+    if request.method=='GET':
+        if request.args.get("ApplicationKey") == "oqwg-dash-jkbc-phuw-qgey-bhas-dapp":
+            db = connect(host='localhost',
+                            user="root",
+                            password="",
+                            db="centralina")
+            cur = db.cursor()
+            
+            cur.execute('SELECT a.oraEvento, d.codiceCentralina, d.temperatura, d.umidita, d.luce, d.pm FROM avvisi a INNER JOIN daticentraline d ON a.idCentralina = d.id WHERE 1 limit 100')
+            
+            results = cur.fetchall()
+            db.close()
+            jresults = {}
 
+            for data in results:
+                print(data[2])
+                if(data[2]>45 or data[2]<18):#controllo temperatura
+                    jresults[str(data[0])] = "temperatura: " + str(data[2])
+                if(data[3]>50 or data[3]<40):
+                    jresults[str(data[0])] = "umidita: " + str(data[3])
+                if(data[4]>1000 or data[4]<500):
+                    jresults[str(data[0])] = "luce: " + str(data[4])
+                if(data[5]>2.5):
+                    jresults[str(data[0])] = "pm: " + str(data[5])
+
+            return jresults, 202
+        else:
+            return "Chiave incorretta"
 
 
 #directory adibita alla chiamata API
@@ -114,10 +148,9 @@ def get_api_value(api_name):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 def get_api_data(api_name):
     if request.method=='GET':
-        if request.args.get("ApplicationKey") == "oqwg-dash-jkbc-phuw-qgey-bhas-dapp":
+        # if request.args.get("ApplicationKey") == "oqwg-dash-jkbc-phuw-qgey-bhas-dapp":
             db = connect(host='localhost',
                             user="root",
                             password="",
@@ -126,7 +159,7 @@ def get_api_data(api_name):
             #da ciò che si inserisce nell'URL restituirà il select dalla centrale
             var = ""
             if api_name == 'weather':
-                return ...
+                return asyncio.run(getweather())
             elif api_name == 'airQuality':
                 var = 'pm'
             elif api_name == 'humidity':
@@ -168,6 +201,7 @@ def decrypt(stringa : str):
     return temp
 
 
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5500, threaded=True)
-
