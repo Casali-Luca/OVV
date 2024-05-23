@@ -1,0 +1,68 @@
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <title>Storico Errori</title>
+</head>
+<script>
+    async function loadDoc() {
+        try {
+            const response = await fetch('http://192.168.12.134:5500/print_all_advices/?ApplicationKey=oqwg-dash-jkbc-phuw-qgey-bhas-dapp');
+            const data = await response.json();
+
+            const tableBody = document.querySelector('tbody');
+
+            Object.keys(data).forEach(key => {
+                console.log(`${key}: ${data[key]}`);
+
+                const newRow = document.createElement('tr');
+                const orarioCell = document.createElement('td');
+
+                orarioCell.textContent = key;
+                newRow.appendChild(orarioCell);
+
+                const parametroCell = document.createElement('td');
+                parametroCell.textContent = data[key];
+
+                newRow.appendChild(parametroCell);
+                tableBody.appendChild(newRow);
+            });
+        } catch (error) {
+            console.log('Error loading data:', error);
+        }
+    }
+    loadDoc();
+</script>
+
+<body>
+<nav class="navbar bg-body-tertiary" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="ovv-Logo_3.png" alt="Bootstrap" width="30" height="24">
+            OVVwebApp
+        </a>
+    </div>
+</nav>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Orario</th>
+        <th scope="col">Valore</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<div class="d-grid gap-2">
+    <button class="btn btn-primary" type="button" onclick="window.location.href='index.html';">Torna alla home</button>
+</div>
+</body>
+</html>
+
