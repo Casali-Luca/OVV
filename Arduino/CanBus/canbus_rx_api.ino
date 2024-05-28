@@ -97,8 +97,46 @@ unsigned int lux;
 unsigned int umi;
 unsigned int tem;
 
+void loop(){
 
-void CentralInsert(){
+  //get data from canbus
+  
+  unsigned char data[1] = {'L'};
+
+  CAN.sendMsgBuf(0x02,0,1, data);
+  delay(1000);  
+  if (CAN_MSGAVAIL == CAN.checkReceive()){
+    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf    
+    lux = (byte)buf[1];
+    lux = lux <<8;
+    lux |= (byte)buf[0];
+    Serial.print("luce: ");
+    Serial.println(lux);
+  }
+  data[0] = {'U'};
+  CAN.sendMsgBuf(0x02,0,1, data);
+  delay(1000);
+  if (CAN_MSGAVAIL == CAN.checkReceive()){
+    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data     
+    umi = (byte)buf[1];
+    umi = umi <<8;
+    umi |= (byte)buf[0];
+    Serial.print("umi: ");
+    Serial.println(umi);
+  }
+  data[0] = {'T'};
+  CAN.sendMsgBuf(0x02,0,1, data);
+  delay(1000);
+  if (CAN_MSGAVAIL == CAN.checkReceive()){
+    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf    
+    tem = (byte)buf[1];
+    tem = tem <<8;
+    tem |= (byte)buf[0];
+    Serial.print("tem: ");
+    Serial.println(tem);
+  }
+
+  //Central Insert
   String PATH_NAME = "/insert_data/centrale/" ;
   duration = pulseIn(pin, LOW);
   lowpulseoccupancy = lowpulseoccupancy+duration;
@@ -217,58 +255,7 @@ void CentralInsert(){
   }
   delay(2000);
   queryString = "?ApplicationKey=oqwg-dash-jkbc-phuw-qgey-bhas-dapp";
-}
 
-
-void loop(){
-
-  //get data from canbus
-  
-  unsigned char data[1] = {'L'};
-
-  CAN.sendMsgBuf(0x02,0,1, data);
-  delay(1000);  
-  if (CAN_MSGAVAIL == CAN.checkReceive()){
-    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf    
-    lux = (byte)buf[1];
-    lux = lux <<8;
-    lux |= (byte)buf[0];
-    Serial.print("luce: ");
-    Serial.println(lux);
-  }
-  data[0] = {'U'};
-  CAN.sendMsgBuf(0x02,0,1, data);
-  delay(1000);
-  if (CAN_MSGAVAIL == CAN.checkReceive()){
-    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data     
-    umi = (byte)buf[1];
-    umi = umi <<8;
-    umi |= (byte)buf[0];
-    Serial.print("umi: ");
-    Serial.println(umi);
-  }
-  data[0] = {'T'};
-  CAN.sendMsgBuf(0x02,0,1, data);
-  delay(1000);
-  if (CAN_MSGAVAIL == CAN.checkReceive()){
-    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf    
-    tem = (byte)buf[1];
-    tem = tem <<8;
-    tem |= (byte)buf[0];
-    Serial.print("tem: ");
-    Serial.println(tem);
-  }
-
-  //Central Insert
-  CentralInsert();
-
-
-  //Left Insert
-  char num[5];
-  char ris[5];
-  const char mappaCrittografia[] = {
-    'L','H', 'k', '@', 'I', 't', '!', ']', 'S', 'd'
-  };
 
 
   //lux
@@ -281,7 +268,7 @@ void loop(){
       ris[j] =  mappaCrittografia[int(num[i])-48];
     }
   }
-  String lux_c = ris;
+  lux_c = ris;
   lux_c = lux_c.substring(0,5);
   
   dtostrf(umi, 6, 2, num);
@@ -293,7 +280,7 @@ void loop(){
       ris[j] =  mappaCrittografia[int(num[i])-48];
     }
   }
-  String umidita_c = ris;
+  umidita_c = ris;
   umidita_c = umidita_c.substring(0,5);
   //temperatura
   dtostrf(tem, 6, 2, num);
@@ -305,13 +292,13 @@ void loop(){
       ris[j] =  mappaCrittografia[int(num[i])-48];
     }
   }
-  String temperatura_c  = ris;
+  temperatura_c  = ris;
   temperatura_c = temperatura_c.substring(0,5);
   ///insert_data/<station>/<temp>,<umidity>,<pm>,<luce>
 
-  queryString = temperatura_c+","+umidita_c+","+ lux_c+queryString;
+  queryString = temperatura_c+","+umidita_c+","+"LpL,"+ lux_c+queryString;
   Serial.println(queryString);
-  String PATH_NAME = "/insert_data/destra/" ;
+  PATH_NAME = "/insert_data/destra/";
 
   if (client.connect(HOST_NAME, HTTP_PORT)) {
     Serial.println("Connected to server");
