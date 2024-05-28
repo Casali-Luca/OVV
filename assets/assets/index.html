@@ -1,179 +1,29 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <title>OvvWebApp</title>
+    <meta charset="UTF-8">
+    <title>Input Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
-
-<script>
-    async function loadDoc() {
-        try {
-            const response = await fetch('http://192.168.12.134:5500/single_api/airQuality?ApplicationKey=oqwg-dash-jkbc-phuw-qgey-bhas-dapp');
-            const data = await response.json();
-            document.getElementById("airQuality").innerHTML = data.value + " pm";
-            updateProgressBar("airQualityProgress", data.value, 0, 100);
-        } catch (error) {
-            console.error('Error loading data:', error);
-        }
-
-        try {
-            const response = await fetch('http://192.168.12.134:5500/single_api/humidity?ApplicationKey=oqwg-dash-jkbc-phuw-qgey-bhas-dapp');
-            const data = await response.json();
-            document.getElementById("humidity").innerHTML = data.value + "%";
-            updateProgressBar("humidityProgress", data.value, 40, 60);
-        } catch (error) {
-            console.error('Error loading data:', error);
-        }
-
-        try {
-            const response = await fetch('http://192.168.12.134:5500/single_api/temperature?ApplicationKey=oqwg-dash-jkbc-phuw-qgey-bhas-dapp');
-            const data = await response.json();
-            document.getElementById("temperature").innerHTML = data.value + "°";
-            updateProgressBar("temperatureProgress", data.value, 0, 100);
-        } catch (error) {
-            console.error('Error loading data:', error);
-        }
-
-        try {
-            const response = await fetch('http://192.168.12.134:5500/single_api/light?ApplicationKey=oqwg-dash-jkbc-phuw-qgey-bhas-dapp');
-            const data = await response.json();
-            document.getElementById("light").innerHTML = data.value + " lm";
-            updateProgressBar("lightProgress", data.value, 300, 500);
-        } catch (error) {
-            console.error('Error loading data:', error);
-        }
-    }
-
-    async function meteo() {
-        try {
-            const response = await fetch('http://192.168.12.134:5500/single_api/weather?key=ApplicationKey=oqwg-dash-jkbc-phuw-qgey-bhas-dapp');
-            const data = await response.json();
-            document.getElementById("weather").innerHTML = data.value;
-        } catch (error) {
-            console.error('Error loading data:', error);
-        }
-    }
-
-    function updateProgressBar(elementId, value, min, max) {
-        const progressBar = document.getElementById(elementId);
-        const percentage = ((value - min) / (max - min)) * 100;
-        progressBar.style.width = percentage + '%';
-    }
-
-    let intervallo_parametri = setInterval(() => {
-        loadDoc();
-    }, 5000);
-
-    let intervallo_meteo = setInterval(() => {
-        meteo();
-    }, 180000);
-</script>
 <body>
-<body>
-
-<nav class="navbar bg-body-tertiary" data-bs-theme="dark">
-    <div class="container">
-        <a class="navbar-brand" href="#">
-            <img src="ovv-Logo_3.png" alt="Bootstrap" width="30" height="24">
-            OVVwebApp
-        </a>
+    <div class="container mt-5">
+        <h1>Inserisci un valore</h1>
+        <form id="inputForm">
+            <div class="mb-3">
+                <label for="userInput" class="form-label">Valore</label>
+                <input type="text" class="form-control" id="userInput" placeholder="Inserisci un valore">
+            </div>
+            <button type="submit" class="btn btn-primary">Invia</button>
+        </form>
     </div>
-</nav>
 
-<div class="position-absolute top-12 start-0">
-    <div class="shadow bg-body-tertiary rounded card mt-2 ms-3" style="width: 11rem;">
-        <center>
-            <div>
-                <span style="font-weight: bold; font-size: 40px" id="humidity"></span>
-            </div>
-        </center>
-        <div class="card-body">
-            <p class="text-center fs-1 fw-bold">Umidit&agrave</p>
-            <div class="progress" role="progressbar" aria-label="Umidita" aria-valuemin="40" aria-valuemax="60">
-                <div class="progress-bar bg-primary" id="humidityProgress" style="width: 50%"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="position-absolute top-12 end-0">
-    <div class="shadow bg-body-tertiary rounded card mt-2 me-3" style="width: 11rem;">
-        <center>
-            <div>
-                <span style="font-weight: bold; font-size: 40px" id="temperature"></span>
-            </div>
-        </center>
-        <div class="card-body">
-            <p class="text-center fs-2 fw-bold mt-1">Temp C°</p>
-            <div class="progress" role="progressbar" aria-label="Temp" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar bg-success" id="temperatureProgress" style="width: 25%"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="position-absolute top-50 start-50 translate-middle">
-    <div class="container text-center">
-        <div class="row">
-            <div class="col">
-                <div class="shadow bg-body-tertiary rounded card mt-4" style="width: 16rem;">
-                    <div class="card-body">
-                        <p class="text-center fs-2 fw-bold mt-1">Meteo</p>
-                        <span class="badge text-bg-info" id="weather"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <center>
-                    <div class="shadow bg-body-tertiary rounded card mt-4" onclick="location.href='paginaErrori.html'" style="width: 11rem;">
-                        <center>
-                            <div class="spinner-grow text-danger mt-4" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </center>
-                        <div class="card-body">
-                            <p class="text-center fs-2 fw-bold mt-1">Avvisi</p>
-                            <span class="badge text-bg-danger" id="avviso">Nesssun avviso</span>
-                        </div>
-                    </div>
-                </center>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="position-absolute bottom-0 start-0">
-    <div class="shadow bg-body-tertiary rounded card mb-4 ms-3" style="width: 11rem;">
-        <center>
-            <div>
-                <span style="font-weight: bold; font-size: 40px" id="light"></span>
-            </div>
-        </center>
-        <div class="card-body">
-            <p class="text-center fs-1 fw-bold">Luce</p>
-            <div class="progress" role="progressbar" aria-label="Temp" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar bg-warning" id="lightProgress" style="width: 50%"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="position-absolute bottom-0 end-0">
-    <div class="shadow bg-body-tertiary rounded card mb-4 me-3" style="width: 11rem;">
-        <center>
-            <div>
-                <span style="font-weight: bold; font-size: 40px" id="airQuality"></span>
-            </div>
-        </center>
-        <div class="card-body">
-            <p class="text-center fs-1 fw-bold">Polvere</p>
-            <div class="progress" role="progressbar" aria-label="Temp" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar bg-secondary" id="airQualityProgress" style="width: 90%"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
+    <script>
+        document.getElementById('inputForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const inputValue = document.getElementById('userInput').value;
+            localStorage.setItem('userInput', inputValue);
+            window.location.href = 'main.html';
+        });
+    </script>
 </body>
 </html>
-
